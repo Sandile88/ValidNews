@@ -4,11 +4,45 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useWeb3 } from '@/contexts/Web3Context';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Clock, ExternalLink, ArrowLeft, AlertCircle } from 'lucide-react';
+
+
+// Mock data service
+const mockDataService = {
+  getClaim: async (id) => {
+    // Simulated API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return {
+      id,
+      summary: "Example claim summary",
+      created_at: new Date().toISOString(),
+      wallet_address: "0x1234567890abcdef",
+      ipfs_hash: "QmXyz123",
+      status: "pending",
+      true_votes: 10,
+      false_votes: 5,
+      unsure_votes: 3
+    };
+  },
+
+  getUserVote: async (claimId, walletAddress) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return null; // Initially no vote
+  },
+
+  saveVote: async (claimId, walletAddress, voteType) => {
+    await new Promise(resolve => setTimeout(resolve, 400));
+    return { id: Date.now(), vote_type: voteType };
+  },
+
+  deleteVote: async (voteId) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return true;
+  }
+};
 
 export default function ClaimDetail() {
   const params = useParams();
@@ -31,17 +65,12 @@ export default function ClaimDetail() {
 
   const fetchClaim = async () => {
     try {
-      const { data, error } = await supabase
-        .from('claims')
-        .select('*')
-        .eq('id', params.id)
-        .maybeSingle();
-
-      if (error) throw error;
+      const data = await mockDataService.getClaim(params.id);
       if (!data) {
         router.push('/browse');
         return;
       }
+      
       setClaim(data);
     } catch (error) {
       console.error('Error fetching claim:', error);
@@ -54,14 +83,7 @@ export default function ClaimDetail() {
     if (!account) return;
 
     try {
-      const { data, error } = await supabase
-        .from('votes')
-        .select('*')
-        .eq('claim_id', params.id)
-        .eq('wallet_address', account)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') throw error;
+      const data = await mockDataService.getUserVote(params.id, account);
       setUserVote(data);
     } catch (error) {
       console.error('Error fetching user vote:', error);
@@ -80,30 +102,17 @@ export default function ClaimDetail() {
 
     try {
       if (userVote) {
-        const { error: deleteError } = await supabase
-          .from('votes')
-          .delete()
-          .eq('id', userVote.id);
+        await mockDataService.deleteVote(userVote.id);
 
-        if (deleteError) throw deleteError;
       }
 
       if (!userVote || userVote.vote_type !== voteType) {
-        const { error: insertError } = await supabase
-          .from('votes')
-          .insert([
-            {
-              claim_id: params.id,
-              wallet_address: account,
-              vote_type: voteType,
-            },
-          ]);
+        const newVote = await mockDataService.saveVote(params.id, account, voteType);
+        setUserVote(newVote);
 
-        if (insertError) throw insertError;
       }
 
       await fetchClaim();
-      await fetchUserVote();
     } catch (err) {
       console.error('Error voting:', err);
       setError('Failed to record vote. Please try again.');

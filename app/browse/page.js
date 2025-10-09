@@ -2,10 +2,30 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, HelpCircle, Clock } from 'lucide-react';
+
+// Mock data service
+const mockDataService = {
+  getClaims: async () => {
+    // Simulated API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return [
+      {
+        id: 1,
+        summary: "Example claim 1",
+        created_at: new Date().toISOString(),
+        status: "pending",
+        true_votes: 5,
+        false_votes: 2,
+        unsure_votes: 1,
+        ipfs_hash: "QmXyz123"
+      },
+      // Add more mock claims as needed
+    ];
+  }
+};
 
 export default function BrowseClaims() {
   const [claims, setClaims] = useState([]);
@@ -17,12 +37,7 @@ export default function BrowseClaims() {
 
   const fetchClaims = async () => {
     try {
-      const { data, error } = await supabase
-        .from('claims')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await mockDataService.getClaims();
       setClaims(data || []);
     } catch (error) {
       console.error('Error fetching claims:', error);

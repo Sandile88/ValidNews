@@ -3,12 +3,23 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWeb3 } from '@/contexts/Web3Context';
-import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { FileUp, AlertCircle } from 'lucide-react';
+
+// Mock data service
+const mockDataService = {
+  submitClaim: async (claimData) => {
+    // Simulated API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+      data: { ...claimData, id: Date.now() },
+      error: null
+    };
+  }
+};
 
 export default function SubmitClaim() {
   const router = useRouter();
@@ -45,19 +56,12 @@ export default function SubmitClaim() {
     setLoading(true);
 
     try {
-      const { data, error: dbError } = await supabase
-        .from('claims')
-        .insert([
-          {
-            summary: summary.trim(),
-            ipfs_hash: ipfsHash || null,
-            wallet_address: account,
-          },
-        ])
-        .select()
-        .maybeSingle();
-
-      if (dbError) throw dbError;
+        const { data, error: submitError } = await mockDataService.submitClaim({
+        summary: summary.trim(),
+        ipfs_hash: ipfsHash || null,
+        wallet_address: account,
+      });
+      if (submitError) throw submitError;
 
       router.push('/browse');
     } catch (err) {
