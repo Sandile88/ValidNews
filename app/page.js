@@ -2,8 +2,22 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2, FileText, Users, Shield } from 'lucide-react';
+import WalletConnect from '../components/WalletConnect';
+import { useMiniKit } from '@coinbase/onchainkit/minikit';
+import { useAccount, useBlockNumber, useChainId } from 'wagmi';
+import { baseSepolia } from 'wagmi/chains';
+
 
 export default function Home() {
+  const { setFrameReady, isFrameReady } = useMiniKit();
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
+
+   useEffect(() => {
+    if (!isFrameReady) setFrameReady();
+  }, [setFrameReady, isFrameReady]);
+
+
   return (
     <div className="min-h-screen">
       <section className="max-w-6xl mx-auto px-4 py-20">
