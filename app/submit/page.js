@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useWeb3 } from '@/contexts/Web3Context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,7 +22,6 @@ const mockDataService = {
 
 export default function SubmitClaim() {
   const router = useRouter();
-  const { account } = useWeb3();
   const [summary, setSummary] = useState('');
   const [file, setFile] = useState(null);
   const [ipfsHash, setIpfsHash] = useState('');

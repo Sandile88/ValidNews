@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useWeb3 } from '@/contexts/Web3Context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +46,7 @@ const mockDataService = {
 export default function ClaimDetail() {
   const params = useParams();
   const router = useRouter();
-  const { account } = useWeb3();
+  const { account } = use();
   const [claim, setClaim] = useState(null);
   const [userVote, setUserVote] = useState(null);
   const [loading, setLoading] = useState(true);

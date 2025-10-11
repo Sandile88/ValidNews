@@ -1,12 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useWeb3 } from '@/contexts/Web3Context';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
 
 export default function Navbar() {
-  const { account, connectWallet, disconnectWallet, isConnecting } = useWeb3();
 
   const formatAddress = (address) => {
     if (!address) return '';
