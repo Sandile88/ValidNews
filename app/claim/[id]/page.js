@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useAccount } from 'wagmi';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Clock, ExternalLink, ArrowLeft, AlertCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
 
 // Mock data service
 const mockDataService = {
@@ -46,7 +48,7 @@ const mockDataService = {
 export default function ClaimDetail() {
   const params = useParams();
   const router = useRouter();
-  const { account } = use();
+  const { address: account } = useAccount();
   const [claim, setClaim] = useState(null);
   const [userVote, setUserVote] = useState(null);
   const [loading, setLoading] = useState(true);

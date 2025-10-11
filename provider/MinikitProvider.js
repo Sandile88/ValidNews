@@ -1,6 +1,6 @@
-"use client"
+'use client';
+
 import { MiniKitProvider } from '@coinbase/onchainkit/minikit';
-import { ReactNode } from 'react';
 import { baseSepolia } from 'wagmi/chains';
 
 export function MiniKitContextProvider({ children }) {

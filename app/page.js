@@ -1,19 +1,18 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2, FileText, Users, Shield } from 'lucide-react';
-import WalletConnect from '../components/WalletConnect';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
-import { useAccount, useBlockNumber, useChainId } from 'wagmi';
-import { baseSepolia } from 'wagmi/chains';
 
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   const { setFrameReady, isFrameReady } = useMiniKit();
-  const { isConnected } = useAccount();
-  const chainId = useChainId();
 
-   useEffect(() => {
+  useEffect(() => {
     if (!isFrameReady) setFrameReady();
   }, [setFrameReady, isFrameReady]);
 

@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, HelpCircle, Clock } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 // Mock data service
 const mockDataService = {
   getClaims: async () => {

@@ -1,16 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
+import WalletConnect from './WalletConnect';
 
 export default function Navbar() {
-
-  const formatAddress = (address) => {
-    if (!address) return '';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
   return (
     <nav className="bg-validnews-surface shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,29 +34,7 @@ export default function Navbar() {
               Browse
             </Link>
 
-            {account ? (
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600 font-medium">
-                  {formatAddress(account)}
-                </span>
-                <Button
-                  onClick={disconnectWallet}
-                  variant="outline"
-                  size="sm"
-                  className="border-primary text-primary hover:bg-primary hover:text-white"
-                >
-                  Disconnect
-                </Button>
-              </div>
-            ) : (
-              <Button
-                onClick={connectWallet}
-                disabled={isConnecting}
-                className="bg-primary hover:bg-primary/90 text-white"
-              >
-                {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-              </Button>
-            )}
+            <WalletConnect />
           </div>
         </div>
       </div>

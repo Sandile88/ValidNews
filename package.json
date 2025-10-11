@@ -7,7 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "echo 'Dependencies installed'"
+  },
+  "overrides": {
+    "@coinbase/onchainkit": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0"
+    }
   },
   "dependencies": {
     "@coinbase/onchainkit": "^1.1.1",

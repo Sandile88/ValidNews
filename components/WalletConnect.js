@@ -58,28 +58,28 @@ export default function WalletConnect({ fullWidth = false, size = 'md' }) {
   const sizeClass = size === 'lg' ? 'h-12 px-6 text-base' : 'px-6 py-2';
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3">
       {isConnected ? (
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg border border-primary-200">
-            <User className="w-4 h-4 text-secondary-600" />
-            <span className="text-sm font-medium text-secondary-800">
+        <>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50">
+            <User className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-gray-700">
               {formatAddress(address)}
             </span>
           </div>
           <button
             onClick={handleDisconnect}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span className="text-sm font-medium">Disconnect</span>
           </button>
-        </div>
+        </>
       ) : (
         <button
           onClick={handleConnect}
           disabled={isLoading}
-          className={`inline-flex items-center justify-center gap-2 bg-gradient-to-r from-secondary-500 to-secondary-600 hover:from-secondary-600 hover:to-secondary-700 text-white rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${widthClass} ${sizeClass}`}
+          className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Wallet className="w-4 h-4" />
           <span>{isLoading ? 'Connecting...' : 'Connect Wallet'}</span>

@@ -1,9 +1,11 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
-import { MiniKitContextProvider } from '../providers/MiniKitProvider';
+import { MiniKitContextProvider } from '../provider/MinikitProvider';
 import Navbar from '@/components/Navbar';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'ValidNews - Decentralized Fact Checker',
@@ -13,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
+      <body className={inter.className}>
         <MiniKitContextProvider>
           <Navbar/>
           {children}
