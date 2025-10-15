@@ -1,14 +1,13 @@
-"use client";
 
 import Image from "next/image";
 import styles from "./page.module.css";
-import { Wallet } from "@coinbase/onchainkit/wallet";
+import WalletWrapper from "../components/WalletWrapper";
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <header className={styles.headerWrapper}>
-        <Wallet />
+        <WalletWrapper />
       </header>
 
       <div className={styles.content}>
