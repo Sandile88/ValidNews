@@ -1,7 +1,7 @@
 
 import Image from "next/image";
 import styles from "./page.module.css";
-import WalletWrapper from "../components/WalletWrapper";
+import WalletWrapper from "./components/WalletWrapper";
 
 export default function Home() {
   return (
