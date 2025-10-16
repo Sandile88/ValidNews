@@ -6,7 +6,12 @@ import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
-  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+  <ThemeProvider 
+   attribute="class" 
+      defaultTheme="light" 
+      enableSystem={false}  
+      disableTransitionOnChange 
+      >
     <OnchainKitProvider
       apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
       chain={baseSepolia}
