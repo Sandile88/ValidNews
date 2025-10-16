@@ -1,13 +1,15 @@
 "use client";
 import { ReactNode } from "react";
-import { base } from "wagmi/chains";
+import { ThemeProvider } from "next-themes";
+import { baseSepolia } from "wagmi/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
 
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
+  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
     <OnchainKitProvider
       apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-      chain={base}
+      chain={baseSepolia}
       config={{
         appearance: {
           mode: "auto",
@@ -20,5 +22,6 @@ export function RootProvider({ children }: { children: ReactNode }) {
     >
       {children}
     </OnchainKitProvider>
+    </ThemeProvider>
   );
 }

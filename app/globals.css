@@ -2,76 +2,113 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #2563eb;
+  --secondary: #facc15;
+  --background: #f9fafb;
+  --text: #111827;
+  --success: #22c55e;
+  --danger: #ef4444;
+}
+
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #171717;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
-  }
-
-  html,
-  body {
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
-
-  body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: var(--font-inter), sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  code {
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-family: var(--font-source-code-pro), monospace;
-    font-size: 0.875rem;
-    padding: 0.25rem 0.5rem calc(0.25rem + 2px);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    code {
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-  }
-
-  * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    html {
-      color-scheme: dark;
-    }
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 48 96% 57%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
   }
 }
 
-/* ---- OnchainKit compatible base styles ---- */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+@layer base {
+  * {
+    @apply border-neutral-200;
+  }
+  body {
+    @apply bg-[#f9fafb] text-[#111827] font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
 
 :root {
-  --font-inter: 'Inter', sans-serif;
+  --ock-bg-default: #2563eb;
+  --ock-bg-default-hover: #1e40af;
+  --ock-bg-default-active: #1d4ed8;
+  --ock-bg-alternate: #f9fafb;
+  --ock-bg-inverse: #111827;
+  --ock-text-foreground: #111827;
+  --ock-text-inverse: #ffffff;
+  --ock-border: #e5e7eb;
+  --ock-border-hover: #d1d5db;
+  --ock-success: #22c55e;
+  --ock-error: #ef4444;
+  --ock-warning: #facc15;
 }
 
-.onchainkit {
-  font-family: var(--font-inter);
-  color: inherit;
+.ockConnectWallet_Container,
+.wallet-wrapper {
+  font-family: inherit;
 }
 
+.ockConnectWallet_Container button,
+button[data-testid="ockConnectButton"],
+.ock-wallet-button {
+  background-color: #2563eb !important;
+  color: white !important;
+  border-radius: 0.5rem !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.2s ease-in-out !important;
+  border: none !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  height: 40px !important;
+  min-height: 40px !important;
+}
+
+.ockConnectWallet_Container button:hover,
+button[data-testid="ockConnectButton"]:hover,
+.ock-wallet-button:hover {
+  background-color: #1e40af !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ockConnectWallet_Container button:active,
+button[data-testid="ockConnectButton"]:active,
+.ock-wallet-button:active {
+  background-color: #1d4ed8 !important;
+  transform: translateY(0);
+}
+
+.ockModal_Container {
+  border-radius: 1rem !important;
+}
+
+.ockModal_Container button {
+  border-radius: 0.5rem !important;
+}
+
+.ock-avatar {
+  border-radius: 50% !important;
+}
