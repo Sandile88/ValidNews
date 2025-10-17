@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
     return config;
   },
   eslint: {
-    // Warning: This allows production builds to complete even with ESLint errors
     ignoreDuringBuilds: true,
   },
 };
