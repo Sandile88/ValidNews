@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Source_Code_Pro } from "next/font/google";
 import { RootProvider } from "./rootProvider";
-// import "@coinbase/onchainkit/styles.css";
 import "./globals.css";
+import { Toaster } from "./components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,7 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${sourceCodePro.variable}`}>
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          {children}
+          <Toaster position="top-right" />
+
+          </RootProvider>
       </body>
     </html>
   );

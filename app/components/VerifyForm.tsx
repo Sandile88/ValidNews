@@ -5,7 +5,6 @@ import { FileText, Link as LinkIcon, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { toast } from "sonner";
 import { Story } from "../types";
@@ -95,6 +94,7 @@ export default function VerifyForm({ onSubmit }: VerifyFormProps) {
 
               <Button
                 type="submit"
+                size="lg"
                 className="w-full bg-[#2563eb] hover:bg-[#1e40af] text-white text-lg h-12"
               >
                 Submit for Verification

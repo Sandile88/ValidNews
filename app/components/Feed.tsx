@@ -148,6 +148,7 @@ export default function Feed({ stories, onVote }: FeedProps) {
                     <Button
                       onClick={() => handleVote(story.id, true)}
                       className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white"
+                      size="lg"
                     >
                       <ThumbsUp className="mr-2 h-5 w-5" />
                       True ({story.votesTrue})
@@ -155,6 +156,7 @@ export default function Feed({ stories, onVote }: FeedProps) {
                     <Button
                       onClick={() => handleVote(story.id, false)}
                       className="flex-1 bg-[#ef4444] hover:bg-[#dc2626] text-white"
+                      size="lg"
                     >
                       <ThumbsDown className="mr-2 h-5 w-5" />
                       False ({story.votesFalse})
