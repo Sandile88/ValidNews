@@ -2,6 +2,7 @@
 
 import { ArrowRight, Shield } from "lucide-react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function LandingPage() {
   const scrollToVerify = () => {
@@ -28,20 +29,25 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            className="bg-[#2563eb] hover:bg-[#1e40af] text-white text-lg px-8"
-            onClick={scrollToVerify}
-          >
-            Submit a Story
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <Link href="/submit">
+            <Button
+              size="lg"
+              className="bg-[#2563eb] hover:bg-[#1e40af] text-white text-lg px-8 w-full sm:w-auto"
+            >
+              Submit a Story
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
 
-          <Button
-            className="text-lg px-8 border-[#2563eb] text-[#2563eb] hover:bg-blue-50 border"
-            onClick={scrollToVerify}
-          >
-            View Feed
-          </Button>
+          <Link href="/feed">
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 border-[#2563eb] text-[#2563eb] hover:bg-blue-50 w-full sm:w-auto"
+            >
+              View Feed
+            </Button>
+          </Link>
         </div>
 
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
