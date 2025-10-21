@@ -5,6 +5,11 @@ import Feed from "../components/Feed";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Story } from "../types";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
+import { useWallet } from "../context/WalletContext";
+
 
 const DUMMY_STORIES: Story[] = [
   {
@@ -40,9 +45,18 @@ const DUMMY_STORIES: Story[] = [
 ];
 
 export default function FeedPage() {
-  const [stories, setStories] = useState<Story[]>(DUMMY_STORIES);
+  const { isConnected } = useWallet();
+  const [stories, setStories] = useState<Story[]>(
+    DUMMY_STORIES.sort((a, b) => b.timestamp - a.timestamp)
+  );
+  const [votedStories, setVotedStories] = useState<Set<string>>(new Set());
 
   const handleVote = (storyId: string, isTrue: boolean) => {
+    if (votedStories.has(storyId)) {
+      toast.error("You have already voted on this story");
+      return;
+    }
+
     setStories((prev) =>
       prev.map((story) => {
         if (story.id === storyId) {
@@ -55,7 +69,29 @@ export default function FeedPage() {
         return story;
       })
     );
+
+    setVotedStories((prev) => new Set(prev).add(storyId));
+    toast.success("Vote recorded successfully!");
   };
+
+  if (!isConnected) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <Alert className="border-2 border-[#2563eb] bg-blue-50">
+              <AlertCircle className="h-5 w-5 text-[#2563eb]" />
+              <AlertDescription className="text-base text-gray-700 ml-2">
+                Please connect your wallet to be able to use the functionalities of this app.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
