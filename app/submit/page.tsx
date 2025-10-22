@@ -2,22 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useWallet } from "../context/WalletContext";
-import { FileText, Link as LinkIcon, Upload, Loader2, AlertCircle } from "lucide-react";
+import { useAppWallet } from "../context/WalletContext";
+import { FileText, Link as LinkIcon, Upload, Loader as Loader2, CircleAlert as AlertCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-
+const SUBMISSION_FEE = 1.00;
 
 export default function SubmitPage() {
   const router = useRouter();
-  const { isConnected } = useWallet();
+  const { isConnected, userId } = useAppWallet();
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,21 +31,58 @@ export default function SubmitPage() {
       return;
     }
 
+    if (!userId) {
+      toast.error("Please connect your wallet");
+      return;
+    }
+
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const { data: story, error: storyError } = await supabase
+        .from("stories")
+        .insert([
+          {
+            title: title.trim(),
+            link: link.trim(),
+            submitted_by: userId,
+            submission_fee: SUBMISSION_FEE,
+          },
+        ])
+        .select()
+        .single();
+
+      if (storyError) throw storyError;
+
+      const { error: transactionError } = await supabase
+        .from("transactions")
+        .insert([
+          {
+            user_id: userId,
+            story_id: story.id,
+            amount: -SUBMISSION_FEE,
+            type: "submission_fee",
+          },
+        ]);
+
+      if (transactionError) throw transactionError;
+
       toast.success("Story submitted successfully!", {
-        description: "Your submission is now pending community verification.",
+        description: `$${SUBMISSION_FEE} submission fee applied. Voting opens for 24 hours.`,
       });
 
       setTitle("");
       setLink("");
-      setIsLoading(false);
 
       setTimeout(() => {
         router.push("/feed");
-      }, 500);
-    }, 2000);
+      }, 1000);
+    } catch (error) {
+      console.error("Error submitting story:", error);
+      toast.error("Failed to submit story. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isConnected) {
@@ -127,9 +165,12 @@ export default function SubmitPage() {
                 />
               </div>
 
-              <div className="bg-blue-50 border-l-4 border-[#2563eb] p-4 rounded">
+              <div className="bg-blue-50 border-l-4 border-[#2563eb] p-4 rounded space-y-2">
                 <p className="text-sm text-gray-700">
-                  <strong>Note:</strong> Your submission will be stored on IPFS and verified by the community through blockchain-powered voting.
+                  <strong>Submission Fee:</strong> $1.00 - 60% distributed to correct voters, 40% to platform
+                </p>
+                <p className="text-sm text-gray-700">
+                  <strong>Note:</strong> Community has 24 hours to vote. Up to 20 votes allowed per story.
                 </p>
               </div>
 

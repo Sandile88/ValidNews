@@ -5,10 +5,10 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 
 export default function LandingPage() {
-  const scrollToVerify = () => {
-    const verifySection = document.getElementById("verify-section");
-    verifySection?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToVerify = () => {
+  //   const verifySection = document.getElementById("verify-section");
+  //   verifySection?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">

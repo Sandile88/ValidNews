@@ -1,77 +1,153 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAppWallet } from "../context/WalletContext";
+import { CircleAlert as AlertCircle, Loader as Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 import Feed from "../components/Feed";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Story } from "../types";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useWallet } from "../context/WalletContext";
+import { supabase } from "@/lib/supabase";
 
+const MAX_VOTES_PER_STORY = 20;
 
-const DUMMY_STORIES: Story[] = [
-  {
-    id: "1",
-    title: "New Renewable Energy Initiative Launches in Major City",
-    link: "https://example.com/renewable-energy",
-    submittedBy: "0x1234...5678",
-    timestamp: Date.now() - 3600000,
-    status: "true",
-    votesTrue: 24,
-    votesFalse: 3,
-  },
-  {
-    id: "2",
-    title: "Breaking: Tech Company Announces Revolutionary AI Product",
-    link: "https://example.com/ai-announcement",
-    submittedBy: "0x8765...4321",
-    timestamp: Date.now() - 7200000,
-    status: "pending",
-    votesTrue: 12,
-    votesFalse: 8,
-  },
-  {
-    id: "3",
-    title: "Celebrity Endorses Questionable Investment Scheme",
-    link: "https://example.com/celebrity-scam",
-    submittedBy: "0xabcd...ef01",
-    timestamp: Date.now() - 10800000,
-    status: "false",
-    votesTrue: 5,
-    votesFalse: 31,
-  },
-];
 
 export default function FeedPage() {
-  const { isConnected } = useWallet();
-  const [stories, setStories] = useState<Story[]>(
-    DUMMY_STORIES.sort((a, b) => b.timestamp - a.timestamp)
-  );
+  const { isConnected, userId } = useAppWallet();
+  const [stories, setStories] = useState<Story[]>([]);
   const [votedStories, setVotedStories] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(true);
 
-  const handleVote = (storyId: string, isTrue: boolean) => {
-    if (votedStories.has(storyId)) {
-      toast.error("You have already voted on this story");
-      return;
+  useEffect(() => {
+    if (isConnected && userId) {
+      fetchStories();
+      fetchUserVotes();
+    }
+  }, [isConnected, userId]);
+
+  const fetchStories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("stories")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const formattedStories = (data || []).map((story: any) => ({
+        id: story.id,
+        title: story.title,
+        link: story.link,
+        submittedBy: story.submitted_by,
+        timestamp: new Date(story.created_at).getTime(),
+        status: story.final_result || "pending",
+        votesTrue: story.votes_true,
+        votesFalse: story.votes_false,
+      }));
+
+      setStories(formattedStories);
+    } catch (error) {
+      console.error("Error fetching stories:", error);
+      toast.error("Failed to load stories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserVotes = async () => {
+    if (!userId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("votes")
+        .select("story_id")
+        .eq("user_id", userId);
+
+      if (error) throw error;
+
+      const votedIds: Set<string> = new Set((data || []).map((v: any) => String(v.story_id)));
+      setVotedStories(votedIds);
+    } catch (error) {
+      console.error("Error fetching user votes:", error);
+    }
+  };
+
+  const handleVote = async (storyId: string, isTrue: boolean): Promise<boolean> => {
+    if (!userId) {
+      toast.error("Please connect your wallet");
+      return false;
     }
 
-    setStories((prev) =>
-      prev.map((story) => {
-        if (story.id === storyId) {
-          if (isTrue) {
-            return { ...story, votesTrue: story.votesTrue + 1 };
-          } else {
-            return { ...story, votesFalse: story.votesFalse + 1 };
-          }
-        }
-        return story;
-      })
-    );
+    if (votedStories.has(storyId)) {
+      toast.error("You have already voted on this story");
+      return false;
+    }
 
-    setVotedStories((prev) => new Set(prev).add(storyId));
-    toast.success("Vote recorded successfully!");
+    const story = stories.find((s) => s.id === storyId);
+    if (!story) return false;
+
+    const votingEndsAt = new Date(story.timestamp + 24 * 60 * 60 * 1000);
+    if (new Date() > votingEndsAt) {
+      toast.error("Voting period has ended for this story");
+      return false;
+    }
+
+    const totalVotes = story.votesTrue + story.votesFalse;
+    if (totalVotes >= MAX_VOTES_PER_STORY) {
+      toast.error(`Maximum of ${MAX_VOTES_PER_STORY} votes reached for this story`);
+      return false;
+    }
+
+    try {
+      const { error: voteError } = await supabase.from("votes").insert([
+        {
+          story_id: storyId,
+          user_id: userId,
+          vote: isTrue,
+        },
+      ]);
+
+      if (voteError) throw voteError;
+
+      const newVotesTrue = isTrue ? story.votesTrue + 1 : story.votesTrue;
+      const newVotesFalse = isTrue ? story.votesFalse : story.votesFalse + 1;
+
+      const { error: updateError } = await supabase
+        .from("stories")
+        .update({
+          votes_true: newVotesTrue,
+          votes_false: newVotesFalse,
+          total_votes: newVotesTrue + newVotesFalse,
+        })
+        .eq("id", storyId);
+
+      if (updateError) throw updateError;
+
+      setStories((prev) =>
+        prev.map((s) =>
+          s.id === storyId
+            ? {
+                ...s,
+                votesTrue: newVotesTrue,
+                votesFalse: newVotesFalse,
+              }
+            : s
+        )
+      );
+
+      setVotedStories((prev) => new Set(prev).add(storyId));
+      toast.success("Vote recorded!", {
+        description: `You voted: ${isTrue ? "True" : "False"}`,
+      });
+          
+    return true;    
+  } catch (error) {
+      console.error("Error voting:", error);
+      toast.error("Failed to record vote. Please try again.");
+      return false;
+    }
   };
 
   if (!isConnected) {
@@ -86,6 +162,21 @@ export default function FeedPage() {
                 Please connect your wallet to be able to use the functionalities of this app.
               </AlertDescription>
             </Alert>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-[#2563eb] mx-auto mb-4" />
+            <p className="text-gray-600">Loading stories...</p>
           </div>
         </div>
         <Footer />

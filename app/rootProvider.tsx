@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
 import { baseSepolia } from "wagmi/chains";
 import { OnchainKitProvider } from "@coinbase/onchainkit";
+import { WalletProvider } from "./context/WalletContext";
 
 export function RootProvider({ children }: { children: ReactNode }) {
   return (
@@ -25,7 +26,9 @@ export function RootProvider({ children }: { children: ReactNode }) {
         },
       }}
     >
-      {children}
+      <WalletProvider>
+        {children}
+      </WalletProvider>
     </OnchainKitProvider>
     </ThemeProvider>
   );

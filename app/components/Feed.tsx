@@ -4,20 +4,16 @@ import { ThumbsUp, ThumbsDown, ExternalLink, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { toast } from "sonner";
 import { Story } from "../types";
 
 interface FeedProps {
   stories: Story[];
-  onVote: (storyId: string, isTrue: boolean) => void;
+  onVote: (storyId: string, isTrue: boolean) => Promise<boolean>;
 }
 
 export default function Feed({ stories, onVote }: FeedProps) {
   const handleVote = (storyId: string, isTrue: boolean) => {
     onVote(storyId, isTrue);
-    toast.success(`Vote recorded!`, {
-      description: `You voted: ${isTrue ? "True" : "False"}`,
-    });
   };
 
   const getStatusColor = (status: Story["status"]) => {
