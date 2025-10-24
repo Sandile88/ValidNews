@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import LandingPage from "./components/LandingPage";
 import HowItWorks from "./components/HowItWorks";
 import Footer from "./components/Footer";
+import { MiniAppReady } from "./components/MiniAppReady";
 
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1">
+        <MiniAppReady/>
         <LandingPage />
         <HowItWorks/>
       </main>
@@ -19,3 +21,5 @@ export default function Home() {
     </div>
   );
 }
+
+// Create app/.well-known/farcaster.json/route.ts:

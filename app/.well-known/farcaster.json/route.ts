@@ -1,0 +1,32 @@
+export async function GET() {
+  const URL = process.env.NEXT_PUBLIC_URL || 'https://valid-news.vercel.app/';
+  
+  return Response.json({
+    accountAssociation: {
+      header: "", 
+      payload: "",
+      signature: ""
+    },
+    baseBuilder: {
+      allowedAddresses: ["YOUR_BASE_WALLET_ADDRESS"] // Add your wallet address
+    },
+    miniapp: {
+      version: "1",
+      name: "ValidNews",
+      homeUrl: URL,
+      iconUrl: `${URL}/icon.png`, 
+      webhookUrl: `${URL}/api/webhook`,
+      subtitle: "Decentralized fact-checking",
+      description: "Community-driven blockchain-based news verification platform",
+      primaryCategory: "social",
+      tags: ["valid", "news", "verification", "base"],
+      heroImageUrl: `${URL}/og-image.png`,
+      tagline: "Verify news with blockchain",
+      ogTitle: "ValidNews - Decentralized Fact-Checking",
+      ogDescription: "Community-driven news verification on Base",
+      ogImageUrl: `${URL}/og-image.png`,
+      noindex: false 
+    }
+  });
+}
+
