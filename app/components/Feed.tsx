@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Story } from "../types";
+import { useState } from "react";
 
 interface FeedProps {
   stories: Story[];
@@ -12,8 +13,19 @@ interface FeedProps {
 }
 
 export default function Feed({ stories, onVote }: FeedProps) {
-  const handleVote = (storyId: string, isTrue: boolean) => {
-    onVote(storyId, isTrue);
+  const [isVoting, setIsVoting] = useState<string | null>(null);
+
+  const handleVote = async (storyId: string, isTrue: boolean) => {
+    if (isVoting) return; // Prevent multiple votes at once
+    
+    setIsVoting(storyId);
+    try {
+      await onVote(storyId, isTrue);
+    } catch (error) {
+      console.error("Vote failed:", error);
+    } finally {
+      setIsVoting(null);
+    }
   };
 
   const getStatusColor = (status: Story["status"]) => {
@@ -85,6 +97,7 @@ export default function Feed({ stories, onVote }: FeedProps) {
           {stories.map((story) => {
             const { truePercent, falsePercent } = calculatePercentage(story);
             const totalVotes = story.votesTrue + story.votesFalse;
+            const isThisStoryVoting = isVoting === story.id;
 
             return (
               <Card
@@ -143,19 +156,21 @@ export default function Feed({ stories, onVote }: FeedProps) {
                   <div className="flex gap-3 w-full">
                     <Button
                       onClick={() => handleVote(story.id, true)}
-                      className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white"
+                      disabled={isThisStoryVoting}
+                      className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white disabled:opacity-50"
                       size="lg"
                     >
                       <ThumbsUp className="mr-2 h-5 w-5" />
-                      True ({story.votesTrue})
+                      {isThisStoryVoting ? "Voting..." : `True (${story.votesTrue})`}
                     </Button>
                     <Button
                       onClick={() => handleVote(story.id, false)}
-                      className="flex-1 bg-[#ef4444] hover:bg-[#dc2626] text-white"
+                      disabled={isThisStoryVoting}
+                      className="flex-1 bg-[#ef4444] hover:bg-[#dc2626] text-white disabled:opacity-50"
                       size="lg"
                     >
                       <ThumbsDown className="mr-2 h-5 w-5" />
-                      False ({story.votesFalse})
+                      {isThisStoryVoting ? "Voting..." : `False (${story.votesFalse})`}
                     </Button>
                   </div>
                 </CardFooter>

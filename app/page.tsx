@@ -22,4 +22,3 @@ export default function Home() {
   );
 }
 
-// Create app/.well-known/farcaster.json/route.ts:
