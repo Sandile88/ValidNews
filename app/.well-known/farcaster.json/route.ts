@@ -14,17 +14,17 @@ export async function GET() {
       version: "1",
       name: "ValidNews",
       homeUrl: URL,
-      iconUrl: `${URL}/icon.png`, 
-      webhookUrl: `${URL}/api/webhook`,
+      iconUrl: `${URL}icon.png`, 
+      webhookUrl: `${URL}api/webhook`,
       subtitle: "Decentralized fact-checking",
       description: "Community-driven blockchain-based news verification platform",
       primaryCategory: "social",
       tags: ["valid", "news", "verification", "base"],
-      heroImageUrl: `${URL}/og-image.png`,
+      heroImageUrl: `${URL}og-image.png`,
       tagline: "Verify news with blockchain",
       ogTitle: "ValidNews - Fact-Checker",
       ogDescription: "Community-driven news verification on Base",
-      ogImageUrl: `${URL}/og-image.png`,
+      ogImageUrl: `${URL}og-image.png`,
       noindex: false 
     }
   });
