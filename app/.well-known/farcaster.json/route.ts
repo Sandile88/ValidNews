@@ -8,7 +8,7 @@ export async function GET() {
       signature: process.env.FARCASTER_SIGNATURE
     },
     baseBuilder: {
-      allowedAddresses: "0xaF877dac28C53AE16AAaBf6B07123245356Dc765"
+      ownerAddress: "0xaF877dac28C53AE16AAaBf6B07123245356Dc765"
     },
     miniapp: {
       version: "1",
