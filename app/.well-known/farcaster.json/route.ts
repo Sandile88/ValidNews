@@ -3,12 +3,12 @@ export async function GET() {
   
   return Response.json({
     accountAssociation: {
-      header: "", 
-      payload: "",
-      signature: ""
+      header: process.env.FARCASTER_HEADER, 
+      payload: process.env.FARCASTER_PAYLOAD,
+      signature: process.env.FARCASTER_SIGNATURE
     },
     baseBuilder: {
-      allowedAddresses: ["YOUR_BASE_WALLET_ADDRESS"] // Add your wallet address
+      allowedAddresses: "" // Add your wallet address
     },
     miniapp: {
       version: "1",
