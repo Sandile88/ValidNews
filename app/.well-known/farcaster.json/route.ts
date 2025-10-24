@@ -22,7 +22,7 @@ export async function GET() {
       tags: ["valid", "news", "verification", "base"],
       heroImageUrl: `${URL}/og-image.png`,
       tagline: "Verify news with blockchain",
-      ogTitle: "ValidNews - Decentralized Fact-Checking",
+      ogTitle: "ValidNews - Fact-Checker",
       ogDescription: "Community-driven news verification on Base",
       ogImageUrl: `${URL}/og-image.png`,
       noindex: false 
