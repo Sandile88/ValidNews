@@ -10,12 +10,15 @@ import Footer from "../components/Footer";
 import { Story } from "../types";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import { useValidNewsContract } from "@/hooks/useValidNewsContract";
+
 
 const MAX_VOTES_PER_STORY = 20;
 
 
 export default function FeedPage() {
-  const { isConnected, userId } = useAppWallet();
+  const { isConnected, userId, address } = useAppWallet();
+  const { vote, isPending, isConfirming } = useValidNewsContract();
   const [stories, setStories] = useState<Story[]>([]);
   const [votedStories, setVotedStories] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -75,7 +78,7 @@ export default function FeedPage() {
   };
 
   const handleVote = async (storyId: string, isTrue: boolean): Promise<boolean> => {
-    if (!userId) {
+    if (!userId || !address) {
       toast.error("Please connect your wallet");
       return false;
     }
@@ -88,19 +91,53 @@ export default function FeedPage() {
     const story = stories.find((s) => s.id === storyId);
     if (!story) return false;
 
-    const votingEndsAt = new Date(story.timestamp + 24 * 60 * 60 * 1000);
-    if (new Date() > votingEndsAt) {
-      toast.error("Voting period has ended for this story");
-      return false;
-    }
+    // const votingEndsAt = new Date(story.timestamp + 24 * 60 * 60 * 1000);
+    // if (new Date() > votingEndsAt) {
+    //   toast.error("Voting period has ended for this story");
+    //   return false;
+    // }
 
-    const totalVotes = story.votesTrue + story.votesFalse;
-    if (totalVotes >= MAX_VOTES_PER_STORY) {
-      toast.error(`Maximum of ${MAX_VOTES_PER_STORY} votes reached for this story`);
-      return false;
-    }
+    // const totalVotes = story.votesTrue + story.votesFalse;
+    // if (totalVotes >= MAX_VOTES_PER_STORY) {
+    //   toast.error(`Maximum of ${MAX_VOTES_PER_STORY} votes reached for this story`);
+    //   return false;
+    // }
 
     try {
+      // Get blockchain ID from Supabase
+      const { data: storyData , error: storyError} = await supabase
+        .from("stories")
+        .select("blockchain_id")
+        .eq("id", storyId)
+        .single();
+
+      if (storyError) {
+        console.error("Error fetching story:", storyError);
+        toast.error("Error finding story");
+        return false;
+     }
+
+    console.log("Story blockchain_id:", storyData?.blockchain_id);
+    console.log("Type of blockchain_id:", typeof storyData?.blockchain_id);
+
+    // Check if blockchain_id is valid (not 0 or null)
+    if (!storyData?.blockchain_id || storyData.blockchain_id === 0) {
+      toast.error("Story not ready for voting yet. Blockchain ID missing.");
+      return false;
+    }
+
+
+      // Submit vote to blockchain
+      toast.info("Submitting vote...");
+      
+      await vote(storyData.blockchain_id, isTrue);
+      
+      toast.info("Waiting for confirmation...");
+              
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+
+      // After blockchain confirmation, update Supabase
       const { error: voteError } = await supabase.from("votes").insert([
         {
           story_id: storyId,
@@ -143,9 +180,9 @@ export default function FeedPage() {
       });
           
     return true;    
-  } catch (error) {
+  } catch (error: any) {
       console.error("Error voting:", error);
-      toast.error("Failed to record vote. Please try again.");
+      toast.error(error?.message || "Failed to record vote. Please try again.");
       return false;
     }
   };

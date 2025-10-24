@@ -16,7 +16,7 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const { address, isConnected } = useAccount(); // 👈 from wagmi
+  const { address, isConnected } = useAccount(); 
   const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<User | null>(null);
 
